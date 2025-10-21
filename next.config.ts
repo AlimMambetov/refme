@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
-    prependData: `@import "~@/styles/global/index.scss";`, // Автоматически добавляет миксины
+    prependData: `@import "@/styles/global/index.scss";`, // Автоматически добавляет миксины
   },
 };
 
