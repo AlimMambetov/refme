@@ -1,0 +1,125 @@
+.wrap {
+	width: 100%;
+	aspect-ratio: 2.5/1;
+	overflow: hidden;
+	mask-image: url('/mask/card-mobile.svg');
+	mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	padding: 0 15px;
+
+	&[data-var=primary] {
+		background-color: var(--main-card-first-bg, #01182D);
+	}
+
+	&[data-var=accent] {
+		background-color: var(--main-card-second-bg, #0079FF);
+
+		.title {
+			color: var(--main-card-second-title, #FFF);
+		}
+
+		.num {
+			color: var(--main-card-first-number, #FFF);
+		}
+
+		.desc {
+			color: var(--main-card-second-description, #C5D8EC);
+		}
+	}
+}
+
+
+.content {
+	display: grid;
+	grid-template-columns: min-content 1fr;
+	grid-template-areas:
+		"num title"
+		"desc desc"
+	;
+	gap: 20px 10px;
+}
+
+
+.num {
+	font-size: 100px;
+	grid-area: num;
+	width: 1.2em;
+	position: relative;
+	user-select: none;
+	color: var(--main-card-first-number, #FFF);
+	translate: -0.15em 0.05em;
+
+	&[data-num="1"] span {
+		letter-spacing: 0.04em;
+	}
+
+
+	span {
+		position: absolute;
+		right: 0;
+		top: 0;
+		translate: 0 -0.28em;
+		font-family: var(--Headline-family, Inter);
+		white-space: nowrap;
+		overflow: hidden;
+		font-style: normal;
+		font-weight: 300;
+		letter-spacing: -0.05em;
+		height: 0.7em;
+	}
+}
+
+.title {
+	color: var(--main-card-first-title, #FFF);
+	grid-area: title;
+	translate: -0.6em 1.5em;
+}
+
+.desc {
+	color: var(--main-card-first-description, #AEBCD3);
+	grid-area: desc;
+	width: 300px;
+	font-size: var(--Description-size2, 12px);
+	margin-top: 20px;
+}
+
+
+.wrap[data-device=desktop] {
+	mask-image: url('/mask/card.svg');
+	padding: var(--padding-page, 64px);
+	padding-right: calc(var(--padding-page, 64px) + 4%);
+	aspect-ratio: 2.9/1;
+
+	.num {
+		font-size: 200px;
+		translate: 0;
+
+		span {
+			height: 0.74em;
+		}
+	}
+
+	.content {
+		display: grid;
+		grid-template-columns: min-content 1fr;
+		grid-template-areas:
+			"num title"
+			"num desc"
+		;
+		gap: var(--indent-16, 16px) var(--indent-24, 24px);
+	}
+
+	.title {
+		translate: 0;
+	}
+
+	.desc {
+		width: 280px;
+		margin-top: 0;
+		font-size: var(--Description-size1, 14px);
+	}
+}

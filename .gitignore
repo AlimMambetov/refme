@@ -1,0 +1,71 @@
+# npm/yarn
+node_modules
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# build
+.next
+.svelte-kit
+.vercel
+.cache
+out
+dist
+build
+releases
+package
+
+# ide
+.vscode
+.idea
+*.code-workspace
+*.sw?
+*.swo
+*.bak
+*.tmp
+
+# os
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.nfs*
+*.log
+
+# certs 
+*.pem
+
+# ts
+*.tsbuildinfo
+next-env.d.ts
+
+# rn
+android/.gradle/
+android/app/build/
+ios/Pods/
+ios/build/
+*.xcworkspace
+*.xcodeproj
+*.xcuserstate
+
+# env
+.env
+.env.*
+!.env.example
+secrets
+
+# docker
+*.pid
+.docker
+
+# other
+*.psd
+*.zip
+*.tar.gz
+*.code-workspace
+rules.pdf

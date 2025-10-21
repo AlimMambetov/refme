@@ -1,0 +1,28 @@
+.wrap {
+	padding-top: 100px;
+}
+
+
+.content {
+	margin: {
+		top: 50px;
+		bottom: 50px;
+	}
+
+	;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 15px;
+
+
+	&__block {
+		display: flex;
+		flex-direction: column;
+		gap: 15px
+	}
+}
+
+.content[data-desktop=false] {
+	display: flex;
+	flex-direction: column;
+}

@@ -1,0 +1,108 @@
+.wrap {
+	$mask-url: '/mask/company-card.svg';
+	cursor: pointer;
+
+	&[data-mask=true] {
+		mask-image: url($mask-url);
+		-webkit-mask-image: url($mask-url);
+		mask-size: contain;
+		-webkit-mask-size: contain;
+		mask-repeat: no-repeat;
+		-webkit-mask-repeat: no-repeat;
+	}
+
+	&[data-mask=false] {
+		border-radius: var(--rounding-big, 24px);
+	}
+
+	background: var(--top_company_card-default-bg, #FFF);
+
+	display: grid;
+	grid-template-columns: 100px 1fr;
+	gap: 0px var(--indent-12, 12px);
+	width: 100%;
+	// aspect-ratio: 2.6/1;
+	padding: 16px var(--padding-sm, 12px);
+	position: relative;
+
+
+
+	&[data-desktop=false] {
+		grid-template-columns: 78px 1fr;
+		min-width: 240px;
+		padding: var(--padding-s, 8px) var(--padding-sm, 12px) var(--padding-s, 8px) var(--padding-s, 8px);
+		gap: 0 var(--indent-8, 8px);
+
+		.like {
+			width: 13px;
+			top: 8px;
+			right: 12px;
+		}
+
+		.text {
+			font-size: var(--Description-size2, 12px);
+			letter-spacing: -0.12px;
+
+			b {
+				font-size: var(--Description-size1, 14px);
+				letter-spacing: -0.14px;
+			}
+		}
+	}
+}
+
+.img {
+	grid-column: span 1;
+	grid-row: span 4;
+	width: 100%;
+	aspect-ratio: 1/1;
+	border-radius: 12px;
+	object-fit: cover;
+}
+
+.title {
+	grid-column: span 1;
+	grid-row: span 2;
+	margin-right: 24px;
+}
+
+.text {
+
+
+	b {
+		overflow: hidden;
+		color: var(--Text_and_Icon-Default-Default, #222);
+		text-overflow: ellipsis;
+		font-family: var(--Headline-family, Inter);
+		font-size: var(--Headline-size3, 16px);
+		font-style: normal;
+		font-weight: var(--Headline-weight_medium, 400);
+		line-height: 100%;
+		letter-spacing: -0.32px;
+	}
+
+	overflow: hidden;
+	color: var(--Text_and_Icon-Default-Tertiary, #8692A1);
+	text-overflow: ellipsis;
+	font-family: var(--Description-family, Inter);
+	font-size: var(--Description-size1, 14px);
+	font-style: normal;
+	font-weight: var(--Description-weight, 300);
+	line-height: 100%;
+	letter-spacing: -0.14px;
+
+
+	&[data-name=followers] {}
+
+	&[data-name=links] {}
+}
+
+.like {
+	position: absolute;
+	width: 20px;
+	right: 15px;
+	top: 15px;
+	color: var(--follow-default-icon, #AEBCD3);
+
+	cursor: pointer;
+}

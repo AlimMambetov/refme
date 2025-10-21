@@ -1,0 +1,62 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"jsx": "preserve",
+		"lib": [
+			"ES2022",
+			"DOM",
+			"DOM.Iterable",
+			"WebWorker",
+			"ScriptHost"
+		],
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		"sourceMap": true,
+		"inlineSources": true,
+		"allowJs": true,
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"noUncheckedIndexedAccess": true,
+		"noFallthroughCasesInSwitch": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowUnusedLabels": false,
+		"allowUnreachableCode": false,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmitOnError": true,
+		"noEmit": true,
+		"incremental": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		],
+		"paths": {
+			"@/*": [
+				"./src/*"
+			],
+			"&/*": [
+				"./public/*"
+			]
+		},
+	},
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		".next/types/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

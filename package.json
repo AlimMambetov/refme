@@ -1,0 +1,37 @@
+{
+  "name": "refme.frontend",
+  "version": "0.2.3",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "start": "next start",
+    "build": "next build",
+    "deploy": "npm run build && npm run export && touch out/.nojekyll && gh-pages -d out"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.1",
+    "@types/swiper": "^5.4.3",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.10.1",
+    "js-cookie": "^3.0.5",
+    "next": "^15.5.6",
+    "normalize.css": "^8.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0",
+    "react-zoom-pan-pinch": "^3.7.0",
+    "sass": "^1.87.0",
+    "swiper": "^11.2.6",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^8.0.0",
+    "gh-pages": "^6.3.0",
+    "typescript": "^5"
+  }
+}

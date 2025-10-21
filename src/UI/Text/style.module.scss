@@ -1,0 +1,100 @@
+:where(.text) {
+	color: inherit;
+}
+
+
+@mixin text_ops() {
+
+	&[data-lines] {
+		display: -webkit-box;
+		-webkit-line-clamp: var(--lines);
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 120% !important;
+	}
+
+	&[data-var=hug] {
+		line-height: 100%;
+	}
+
+	&[data-var=medium] {
+		font-weight: var(--Body-weight_medium, 400);
+	}
+
+	&[data-var=underline] {
+		text-decoration-line: underline;
+		text-decoration-style: solid;
+		text-decoration-skip-ink: auto;
+		text-decoration-thickness: 7%;
+		text-underline-offset: 15%;
+		text-underline-position: from-font;
+	}
+}
+
+
+.text {
+	@include text_ops;
+
+	&[data-level=body] {
+		@include text_ops;
+		font-family: var(--Body-family, Inter);
+		font-size: var(--Body-size1, 20px);
+		font-style: normal;
+		font-weight: var(--Body-weight_regular, 300);
+		line-height: 120%;
+		letter-spacing: -0.4px;
+	}
+
+	&[data-level=body-2] {
+		@include text_ops;
+		font-family: var(--Body-family, Inter);
+		font-size: var(--Body-size2, 16px);
+		font-style: normal;
+		font-weight: var(--Body-weight_regular, 300);
+		line-height: 120%;
+		letter-spacing: -0.32px;
+	}
+
+	&[data-level=desc] {
+		@include text_ops;
+		font-family: var(--Description-family, Inter);
+		font-size: var(--Description-size1, 14px);
+		font-style: normal;
+		// font-weight: var(--Description-weight, 300);
+		font-weight: 300;
+		line-height: 120%;
+		letter-spacing: -0.14px;
+	}
+
+	&[data-level=desc-2] {
+		@include text_ops;
+		font-family: var(--Description-family, Inter);
+		font-size: var(--Description-size2, 12px);
+		font-style: normal;
+		font-weight: var(--Description-weight, 300);
+		line-height: 120%;
+		letter-spacing: -0.12px;
+	}
+
+	&[data-level=label] {
+		@include text_ops;
+		font-family: var(--Headline-family, Inter);
+		font-size: var(--Headline-size2, 20px);
+		font-style: normal;
+		font-weight: var(--Headline-weight_medium, 400);
+		line-height: 100%;
+		letter-spacing: -0.4px;
+	}
+
+	&[data-level=label-2] {
+		@include text_ops;
+		font-family: var(--Headline-family, Inter);
+		font-size: var(--Headline-size3, 16px);
+		font-style: normal;
+		font-weight: var(--Headline-weight_medium, 400);
+		line-height: 100%;
+		letter-spacing: -0.32px;
+	}
+
+}

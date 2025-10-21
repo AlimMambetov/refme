@@ -1,0 +1,44 @@
+.header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: var(--padding-m, 16px) 0;
+	background: var(--sds-color-background-default-default, #F3F3F1);
+	z-index: 20;
+	transition: box-shadow 0.3s, padding 0.3s;
+
+	&[data-shadow=true] {
+		// box-shadow: 0 2px 15px 0px rgba($color: #000000, $alpha: 0.1);
+		padding: 10px 0;
+	}
+
+	.logo {
+		width: 100px;
+		height: auto;
+	}
+
+
+	&__cont {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+
+		&[data-mobile] {
+			display: grid;
+			grid-template-columns: 1fr min-content min-content;
+			gap: 10px;
+
+
+
+			[name=menu] {
+				aspect-ratio: 1;
+
+				svg {
+					font-size: 12px;
+				}
+			}
+		}
+	}
+}

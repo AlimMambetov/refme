@@ -1,0 +1,7 @@
+@mixin line-clamp($num: 3) {
+	display: -webkit-box;
+	-webkit-line-clamp: $num;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

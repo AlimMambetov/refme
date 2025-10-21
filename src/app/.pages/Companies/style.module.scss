@@ -1,0 +1,120 @@
+.wrap {
+	display: flex;
+	padding: var(--padding-l, 24px) 0;
+	padding-top: calc(var(--padding-l, 24px) + $header-h);
+	flex-direction: column;
+	gap: var(--indent-24, 24px);
+
+	&[data-desktop=false] {
+		.top {
+			padding: 0;
+			grid-template-columns: repeat(2, 1fr);
+			overflow-x: auto;
+		}
+
+
+		.blocks {
+
+			&__item {
+				flex-direction: column;
+				gap: var(--indent-8, 8px);
+			}
+
+			&__cards {
+				display: flex;
+				flex-direction: column;
+				background-color: transparent;
+				padding: 0;
+				gap: var(--indent-8, 8px);
+			}
+		}
+
+	}
+}
+
+
+.top {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px var(--indent-12, 12px);
+	padding: 60px 0;
+}
+
+.letters {
+	display: flex;
+	justify-content: space-between;
+	padding: 30px 0;
+	color: var(--header_button-default, #01182D);
+	font-family: var(--Headline-family, Inter);
+	font-size: var(--Headline-size2, 20px);
+	font-style: normal;
+	font-weight: var(--Headline-weight_medium, 400);
+	line-height: 100%;
+	letter-spacing: -0.4px;
+	text-transform: uppercase;
+
+	&__item {
+
+		cursor: pointer;
+		transition: color 0.2s;
+
+		&:hover {
+			color: var(--header_button-hover, #0F8CE9);
+		}
+
+
+		&[data-active=true] {
+			color: var(--header_button-active, #0079FF);
+			text-decoration-line: underline;
+			text-decoration-style: solid;
+			text-decoration-skip-ink: auto;
+			text-decoration-thickness: 7%;
+			/* 1.4px */
+			text-underline-offset: 15%;
+			/* 3px */
+			text-underline-position: from-font;
+		}
+	}
+}
+
+
+.blocks {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding-top: 30px;
+	padding-bottom: 100px;
+
+	&__item {
+		display: flex;
+	}
+
+
+	&__key {
+		color: var(--Text_and_Icon-Bright-Default, #0079FF);
+		text-align: center;
+
+		/* H2 */
+		font-family: var(--Title-family, "Space Grotesk");
+		font-size: var(--Title-size2, 32px);
+		font-style: normal;
+		font-weight: var(--Title-weight, 400);
+		line-height: 96%;
+		/* 30.72px */
+		letter-spacing: -0.96px;
+		text-transform: uppercase;
+		width: 100px;
+		text-align: left;
+	}
+
+
+	&__cards {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		border-radius: var(--rounding-big, 24px);
+		background: var(--Background-Bright-Tertiary, #DBE3EB);
+		padding: var(--padding-l, 24px);
+		gap: var(--indent-20, 20px);
+	}
+}

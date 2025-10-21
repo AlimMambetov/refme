@@ -1,0 +1,90 @@
+:where(.title) {
+	color: inherit;
+}
+
+
+
+@mixin title_ops() {
+
+	&[data-lines] {
+		display: -webkit-box;
+		-webkit-line-clamp: var(--lines);
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 120% !important;
+	}
+
+
+	&[data-var=hero] {
+		font-family: var(--Hero-family, "Space Grotesk");
+		font-size: var(--Hero-size, 64px);
+		font-style: normal;
+		font-weight: var(--Hero-weight, 400);
+		line-height: 86%;
+		letter-spacing: -2.56px;
+	}
+
+	&[data-var="120"] {
+		line-height: 120%;
+	}
+
+	&[data-var=semibold] {
+		font-weight: var(--Headline-weight_semibold, 500);
+	}
+}
+
+
+h1.title {
+	@include title_ops;
+
+	font-family: var(--Title-family, "Space Grotesk");
+	font-size: var(--Title-size1, 64px);
+	font-style: normal;
+	font-weight: var(--Title-weight, 400);
+	line-height: 86%;
+	letter-spacing: -2.56px;
+}
+
+h2.title {
+	@include title_ops;
+	font-family: var(--Title-family, "Space Grotesk");
+	font-size: var(--Title-size2, 32px);
+	font-style: normal;
+	font-weight: var(--Title-weight, 400);
+	line-height: 96%;
+	letter-spacing: -0.96px;
+}
+
+h3.title {
+	@include title_ops;
+
+	font-family: var(--Headline-family, Inter);
+	font-size: var(--Headline-size1, 24px);
+	font-style: normal;
+	font-weight: var(--Headline-weight_medium, 400);
+	line-height: 96%;
+	letter-spacing: -0.48px;
+}
+
+h4.title {
+	@include title_ops;
+
+	font-family: var(--Headline-family, Inter);
+	font-size: var(--Headline-size2, 20px);
+	font-style: normal;
+	font-weight: var(--Headline-weight_medium, 400);
+	line-height: 100%;
+	letter-spacing: -0.4px;
+}
+
+h5.title {
+	@include title_ops;
+
+	font-family: var(--Headline-family, Inter);
+	font-size: var(--Headline-size3, 16px);
+	font-style: normal;
+	font-weight: var(--Headline-weight_medium, 400);
+	line-height: 100%;
+	letter-spacing: -0.16px;
+}
