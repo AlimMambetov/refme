@@ -23,7 +23,7 @@ export const LinkCard = ({ preview = true }: any) => {
 				<Tag color="green" icon='certificate'>security checked</Tag>
 				<Tag icon='time-duration'>2 h. ago</Tag>
 			</div>
-			<div className={cls.foot}>
+			<div onClick={e => e.stopPropagation()} className={cls.foot}>
 				<LinkText />
 				<Button className={cls.use} size={isDesktop ? 'big' : 'small'} variant='secondary'>{isDesktop ? 'Use link now' : 'Use'}<Icon name='link' /></Button>
 			</div>
