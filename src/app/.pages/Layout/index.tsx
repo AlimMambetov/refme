@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useUI } from '@/UI';
 import { useMotionValueEvent, useScroll } from 'framer-motion';
+import { ModalBarLink } from '@/components';
 
 export function Layout({
 	children
@@ -33,6 +34,7 @@ export function Layout({
 	if (pathname == '/auth') return (children)
 
 	return (<>
+		<ModalBarLink />
 		<Header />
 		<main>
 			{children}

@@ -11,7 +11,7 @@ export type T_TagProps = ComponentProps<typeof motion.div> & {
 	children?: ReactNode;
 	style?: CSSProperties;
 	color?: 'default' | 'blue' | 'green' | 'yellow' | 'white';
-	icon: T_IconNames
+	icon?: T_IconNames
 }
 
 

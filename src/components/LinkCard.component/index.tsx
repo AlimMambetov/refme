@@ -2,40 +2,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import cls from './style.module.scss';
 import { useUI } from '@/UI';
-import { useIsDesktop } from '@/hooks';
+import { useActions, useIsDesktop } from '@/hooks';
 
 export const LinkCard = ({ preview = true }: any) => {
-	const { Text, Tag, Icon, Button } = useUI();
-	const [isCopy, SET_isCopy] = useState(false);
-	const copyTimeout = useRef<any>(null);
+	const { Text, LinkText, Tag, Icon, Button } = useUI();
 	const isDesktop = useIsDesktop();
-	const copyText = 'https://www.link.com/referral/moneyback/offer';
-
-
-
-	const copyAction = async () => {
-		try {
-			await navigator.clipboard.writeText(copyText);
-			clearTimeout(copyTimeout.current)
-			SET_isCopy(true);
-			copyTimeout.current = setTimeout(() => {
-				SET_isCopy(false)
-			}, 1000);
-		} catch (err) {
-			console.error('Ошибка копирования:', err);
-		}
-	}
-
-	useEffect(() => {
-		return () => {
-			clearTimeout(copyTimeout.current)
-		}
-	}, [])
-
+	const { OPEN_MODAL } = useActions()
 
 
 	return (<>
-		<div data-preview={preview} data-desktop={isDesktop} className={cls.wrap}>
+		<div onClick={() => OPEN_MODAL()} data-preview={preview} data-desktop={isDesktop} className={cls.wrap}>
 			{preview && <div className={cls.logo}>
 				<img src="/images/test-logo.png" />
 			</div>}
@@ -48,15 +24,7 @@ export const LinkCard = ({ preview = true }: any) => {
 				<Tag icon='time-duration'>2 h. ago</Tag>
 			</div>
 			<div className={cls.foot}>
-				<div className={cls.copy}>
-					<a target='_blank' href={copyText}>{copyText}</a>
-					<div data-copy={isCopy} className={cls.copy__icon} onClick={copyAction}>
-						{isCopy
-							? <Icon name='tick' />
-							: <Icon name='copy' />
-						}
-					</div>
-				</div>
+				<LinkText />
 				<Button className={cls.use} size={isDesktop ? 'big' : 'small'} variant='secondary'>{isDesktop ? 'Use link now' : 'Use'}<Icon name='link' /></Button>
 			</div>
 		</div>
