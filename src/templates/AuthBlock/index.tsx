@@ -18,7 +18,7 @@ export const AuthBlock = (props: any) => {
 		password: ['', false],
 	});
 	const [formValid, SET_formValid] = useState(true);
-	const [type, SET_type] = useState<'sign-in' | 'sign-up' | 'code' | 'username'>('sign-in');
+	const [type, SET_type] = useState<'sign-in' | 'sign-up' | 'code' | 'username' | 'forgot' | 'reset-pass'>('sign-in');
 	const [errInpApi, SET_errInpApi] = useState('');
 	const timeoutRef = useRef<any>(null);
 
@@ -61,6 +61,17 @@ export const AuthBlock = (props: any) => {
 		SET_errInpApi('');
 		const password = formData.password[0];
 		const email = formData.email[0];
+
+		if (type == 'forgot') {
+			SET_type('reset-pass');
+			await fetch(`${API_URL}/api/auth/forgot-password`, fetchDataPOST({ email }))
+			return;
+		}
+
+		if (type == 'reset-pass') {
+			return
+		}
+
 		if (type == 'sign-in') {
 			const fetchData = await fetch(`${API_URL}/api/auth/login`, fetchDataPOST({ email, password }))
 			const { accessToken, refreshToken } = await fetchData.json();
@@ -93,13 +104,17 @@ export const AuthBlock = (props: any) => {
 	const checkValid = async (code: any) => {
 		try {
 			const email = formData.email[0];
-			const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code }))
+			const newPassword = formData.password[0]
+			const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code, newPassword }))
 			const { accessToken, refreshToken } = await fetchData.json();
-			if (fetchData?.ok) {
-				setTokens({ accessToken, refreshToken })
-				SET_type('username')
-				return true
-			}
+
+			location.pathname = '/'
+
+			// if (fetchData?.ok) {
+			// 	setTokens({ accessToken, refreshToken })
+			// 	SET_type('username')
+			// 	return true
+			// }
 			return fetchData?.ok
 		} catch (error) {
 			return false
@@ -111,19 +126,24 @@ export const AuthBlock = (props: any) => {
 		"sign-up": "Create your RefMe account",
 		"code": "Enter verification code",
 		"username": "Enter your Username",
+		"forgot": "Reset your password",
+		"reset-pass": "Enter verification code",
 	} as any;
 
 	const textObj = {
 		"sign-in": "or log in with email",
 		"sign-up": "or create account with email",
 		"code": <>We`ve sent a code to <b>{formData?.email}</b></>,
+		"reset-pass": <>We`ve sent a code to <b>{formData?.email}</b></>,
 		"username": "Your username will be displayed when you post links",
+		"forgot": "Enter the email address to which your account is registered",
 	} as any;
 
 	const hintObj = {
 		"sign-in": <><p>Don't have an account?</p> <b onClick={() => SET_type('sign-up')}>Sign up</b></>,
 		"sign-up": <><p>Already have an account?</p> <b onClick={() => SET_type('sign-in')}>Log in</b></>,
 		"code": <><p>Didn't get a code even after resending?</p> <b>Contact support</b></>,
+		"reset-pass": <><p>Didn't get a code even after resending?</p> <b>Contact support</b></>,
 		// "username": <><p>Don't have an account?</p> <b>Sign up</b></>,
 	} as any;
 
@@ -132,11 +152,17 @@ export const AuthBlock = (props: any) => {
 		"sign-up": "Create new account",
 		"code": "Resend a code",
 		"username": "Save",
+		"forgot": "Reset password",
+		"reset-pass": "Resend a code",
 	} as any;
 
 
 	const authGoogle = async () => {
 		router.push(`${API_URL}/api/auth/google`)
+	}
+
+	const onForgot = () => {
+		SET_type('forgot')
 	}
 
 	return (<>
@@ -156,24 +182,30 @@ export const AuthBlock = (props: any) => {
 				{type == 'code' && <div className={cls.auth__back}>
 					<Button onClick={() => SET_type('sign-up')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Change email</Button>
 				</div>}
+				{type == 'reset-pass' && <div className={cls.auth__back}>
+					<Button onClick={() => SET_type('forgot')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Change email</Button>
+				</div>}
+				{type == 'forgot' && <div className={cls.auth__back}>
+					<Button onClick={() => SET_type('sign-in')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Back</Button>
+				</div>}
 				<div className={cls.auth__head}>
 					<Title className={cls.auth__title} level={2}>{titleObj[type]}</Title>
-					{(['code', 'username'].includes(type)) && <Text className={cls.text}>{textObj[type]}</Text>}
+					{(['code', 'username', 'forgot', 'reset-pass'].includes(type)) && <Text className={cls.text}>{textObj[type]}</Text>}
 				</div>
 				{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.auth__btns}>
 					<Button onClick={authGoogle} className={cls.btn} variant='primary'>Log in with Google <Icon name='google-fill' /></Button>
-					<Button className={cls.btn} variant='primary'>Log in with Apple <Icon name='apple' /></Button>
+					{/* <Button className={cls.btn} variant='primary'>Log in with Apple <Icon name='apple' /></Button> */}
 				</div>}
 				<form onSubmit={sendReq} className={cls.form}>
 					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.form__legend}>{textObj[type]}</div>}
-					{type == 'code' && <InputCode className={cls.code} checkValid={checkValid} />}
+					{(['reset-pass', 'code'].includes(type)) && <InputCode className={cls.code} checkValid={checkValid} />}
 					{type == 'username' && <div className={cls.username}>
 						<InputText w='100%' label='Username' />
 						<p className={cls.username__desc}>You can use a–z, 0-9 and _ <br />The minimum length is 5 simbols</p>
 					</div>}
-					{(['sign-up', 'sign-in'].includes(type)) && <>
+					{(['sign-up', 'sign-in', 'forgot'].includes(type)) && <>
 						<InputText error={errInpApi} w='100%' value={formData.email[0]} onChange={changeInp} name='email' validationRules={validations.email} label='Email' />
-						<InputText w='100%' value={formData.password[0]} forgot={type == 'sign-in' ? 'link' : ''} name='password' onChange={changeInp} validationRules={validations.password} type='password' label='Password' />
+						<InputText w='100%' value={formData.password[0]} forgot={type == 'sign-in' ? <div className='forgot' onClick={onForgot}>Forgot</div> : ''} name='password' onChange={changeInp} validationRules={validations.password} type='password' label={type == 'forgot' ? 'Enter new password' : 'Password'} />
 					</>}
 					{type == 'sign-up' && <InputText w='100%' name='password-confirm' validationRules={[{ custom: (value) => value == formData.password[0], message: 'Passwords do not match' }]} onChange={changeInp} type='password' label='Confirm password' />}
 					<Button disabled={['sign-up', 'sign-in'].includes(type) && !formValid} type='submit' variant={['sign-up', 'sign-in'].includes(type) ? 'secondary' : 'primary'} w='100%'>{submitObj[type]}</Button>
@@ -183,7 +215,7 @@ export const AuthBlock = (props: any) => {
 					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.form__legend}>{textObj[type]}</div>}
 					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.auth__btns}>
 						<Button className={cls.btn} variant='primary'>Google <Icon name='google-fill' /></Button>
-						<Button className={cls.btn} variant='primary'>Apple <Icon name='apple' /></Button>
+						{/* <Button className={cls.btn} variant='primary'>Apple <Icon name='apple' /></Button> */}
 					</div>}
 					<div className={cls.previewInfo}>
 						<div className={cls.previewInfo__desc}>

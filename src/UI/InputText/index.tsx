@@ -1,5 +1,5 @@
 'use client'
-import React, { ComponentProps, CSSProperties, ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ComponentProps, CSSProperties, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import cls from './style.module.scss';
 import { T_IconNames } from './Icons'
 import clsx from 'clsx';
@@ -48,7 +48,7 @@ export type T_InputProps = Omit<ComponentProps<'input'>, 'onChange' | 'onBlur' |
 	isRecent?: boolean;
 	popular?: null | string[];
 	advice?: null | string[];
-	forgot?: string;
+	forgot?: string | ReactNode;
 }
 
 

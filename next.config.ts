@@ -6,9 +6,13 @@ const nextConfig: NextConfig = {
   env: {
     APP_VERSION: process.env.npm_package_version,
   },
+
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
-    prependData: `@import "@/styles/global/index.scss";`, // Автоматически добавляет миксины
+    prependData: `
+      @use "@/styles/global/vars.scss" as *;
+      @use "@/styles/global/mixins.scss" as *;
+    `,
   },
 };
 

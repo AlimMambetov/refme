@@ -17,8 +17,16 @@
 
 .info {
 	display: flex;
-	align-items: center;
-	gap: var(--indent-32, 32px);
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: start;
+
+	&__box {
+
+		display: flex;
+		align-items: center;
+		gap: var(--indent-32, 32px);
+	}
 }
 
 
