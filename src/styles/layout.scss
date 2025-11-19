@@ -1,3 +1,7 @@
+@use "@/styles/global/vars.scss" as *;
+@use "@/styles/global/mixins.scss" as *;
+@use "@/styles/global/funcs.scss" as *;
+
 body {
 	display: flex;
 	flex-direction: column;

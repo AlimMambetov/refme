@@ -3,27 +3,32 @@ import { configureStore } from '@reduxjs/toolkit';
 
 // slices
 import * as base from './base.slice';
-import * as env from './env.slice';
+import * as env from './env.slice'
 
+const createStoreConfig = <T extends Record<string, any>>(slices: T) => {
+	const reducers = {} as any;
+	const actions = {} as any;
 
-const reducers = {
-	base: base.default,
-	env: env.default,
+	Object.keys(slices).forEach(key => {
+		reducers[key] = slices[key].default;
+		actions[key + 'Action'] = slices[key];
+	});
+
+	return { reducers, actions };
 };
 
-const actions = {
-	...base,
-	...env,
-	default: ''
-};
+
+const { reducers, actions } = createStoreConfig({
+	base,
+	env,
+});
 
 const store = configureStore({
-	reducer: { ...reducers }
-})
+	reducer: reducers
+});
+
 
 export default store;
-
-export type RootState = ReturnType<typeof store.getState>;
 
 export {
 	reducers,

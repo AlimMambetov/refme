@@ -1,9 +1,11 @@
-import { Main } from "@/app/.pages";
+import { Links, Main } from "@/components/templates";
 
 
 
 
 export default async function Page() {
 
-	return (<><Main /></>);
+	return (<>
+		<Main />
+	</>);
 }

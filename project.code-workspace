@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"name": "Config Files",
+			"path": "."
+		},
+		{
+			"name": "Assets",
+			"path": "public"
+		},
+		{
+			"name": "Router",
+			"path": "src/app"
+		},
+		{
+			"name": "Components",
+			"path": "src/components"
+		},
+		{
+			"name": "Core",
+			"path": "src"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/src": true,
+			"**/public": true,
+			"**/app": true,
+			"**/components": true,
+			"**/node_modules": true,
+			"**/.next": true,
+			"**/package-lock.json": true,
+			"**/yarn-lock.json": true,
+		}
+	}
+}

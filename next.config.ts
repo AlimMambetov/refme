@@ -3,9 +3,19 @@ import path from 'path';
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  output: 'standalone',
+  reactStrictMode: false,
   env: {
     APP_VERSION: process.env.npm_package_version,
+  },
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
+
+  // Убрать все логи при билде
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 
   sassOptions: {
@@ -13,8 +23,15 @@ const nextConfig: NextConfig = {
     prependData: `
       @use "@/styles/global/vars.scss" as *;
       @use "@/styles/global/mixins.scss" as *;
+      @use "@/styles/global/funcs.scss" as *;
     `,
   },
+
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+
+
 };
 
 export default nextConfig;

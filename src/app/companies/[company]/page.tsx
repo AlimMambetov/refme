@@ -1,4 +1,4 @@
-import { Company } from "@/app/.pages";
+import { Company } from "@/components/templates";
 
 
 export default async function Page() {

@@ -1,4 +1,4 @@
-import { Auth } from "../.pages";
+import { Auth } from "@/components/templates";
 
 
 

@@ -1,6 +1,12 @@
+@use "@/styles/global/vars.scss" as *;
+@use "@/styles/global/mixins.scss" as *;
+@use "@/styles/global/funcs.scss" as *;
+
+
 body,
 html {
 	background: var(--background-default-default, #fff);
+
 }
 
 

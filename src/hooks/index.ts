@@ -1,2 +1,3 @@
-export * from './useActions.hook'
-export * from './useDevice.hook'
+export * from './useActions'
+export * from './useTruncation'
+export * from './useScreen'

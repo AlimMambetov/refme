@@ -1,9 +1,9 @@
-import { FAQ } from "../.pages";
+import { FAQ } from "@/components/templates";
 
 
 
 
 export default async function Page() {
 
-	return (<><FAQ /></>);
+	return (<><FAQ /> </>);
 }

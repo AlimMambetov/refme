@@ -1,5 +1,4 @@
-import { Companies } from "../.pages";
-
+import { Companies } from "@/components/templates";
 
 
 

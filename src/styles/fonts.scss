@@ -1,13 +1,15 @@
+// body {
+// 	font-family: var(--font-Comfortaa), Arial, Helvetica, sans-serif;
+// }
 @font-face {
 	font-family: 'Inter';
-	src: url('../../public/fonts/Inter/Inter-VariableFont_opsz\,wght.ttf');
+	src: url('../../public/fonts/Inter/Inter-VariableFont.ttf');
 }
 
 @font-face {
 	font-family: 'Space Grotesk';
-	src: url('../../public/fonts/Space_Grotesk/SpaceGrotesk-VariableFont_wght.ttf');
+	src: url('../../public/fonts/Space_Grotesk/SpaceGrotesk-VariableFont.ttf');
 }
-
 
 :where(*) {
 	font-family: 'Inter';

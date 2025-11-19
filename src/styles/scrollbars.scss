@@ -1,11 +1,15 @@
-::-webkit-scrollbar {
-	width: 0.2em;
-	border-radius: 0;
-	display: block;
-	background-color: var(--c-text);
-}
+@use "@/styles/global/vars.scss" as *;
+@use "@/styles/global/mixins.scss" as *;
+@use "@/styles/global/funcs.scss" as *;
 
-::-webkit-scrollbar-thumb {
-	background: var(--c-decor);
-	border-radius: 0;
-}
+// ::-webkit-scrollbar {
+// 	width: 0.2em;
+// 	border-radius: 0;
+// 	display: block;
+// 	background-color: var(--c-text);
+// }
+
+// ::-webkit-scrollbar-thumb {
+// 	background: var(--c-decor);
+// 	border-radius: 0;
+// }

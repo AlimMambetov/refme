@@ -1,8 +1,7 @@
-// @import 'normalize.css';
 @use './default.scss';
-@use './fonts.scss';
 @use './vars.scss';
+@use './fonts.scss';
 @use './base.scss';
-@use './components.scss';
 @use './layout.scss';
 @use './scrollbars.scss';
+@use './markdown.scss';
