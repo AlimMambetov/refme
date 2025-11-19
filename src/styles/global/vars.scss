@@ -201,12 +201,12 @@ $colors: (
 
 // --------------------- set root color vars
 
-:root {
-	@each $key, $value in $colors {
-		--clr-#{$key} : #{$value};
-	}
+// :root {
+// 	@each $key, $value in $colors {
+// 		--clr-#{$key} : #{$value};
+// 	}
 
-	@each $key, $value in $viewport {
-		--w-#{$key} : #{$value};
-	}
-}
+// 	@each $key, $value in $viewport {
+// 		--w-#{$key} : #{$value};
+// 	}
+// }
