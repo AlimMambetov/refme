@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 
 const initialState = {
-	// API_URL: 'http://91.198.220.107:3000',
-	API_URL: 'http://localhost:5000'
+	API_URL: 'http://91.198.220.107:3030',
+	// API_URL: 'http://localhost:3030'
 }
 
 const base = createSlice({

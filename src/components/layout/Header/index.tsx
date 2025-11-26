@@ -21,10 +21,18 @@ export const Header = ({ className = null }: any) => {
 		else SET_shadowHeader(false);
 	});
 
+
+	const refreshPage = () => {
+		location.reload()
+		location.href = '/';
+	}
+
+
+
 	if (isDesktop) return (<>
 		<header data-shadow={shadowHeader} className={clsx(cls.header, className)}>
 			<div className={`${cls.header__cont} container`} >
-				<Icon className={cls.logo} name='full-logo' />
+				<Icon onClick={refreshPage} className={cls.logo} name='full-logo' />
 				<Navigation />
 				<Button variant='secondary' size='small' onClick={() => router.push('/auth')}> Log in/Sign up </Button>
 			</div>
@@ -33,10 +41,11 @@ export const Header = ({ className = null }: any) => {
 
 
 
+
 	else return (<>
 		<header data-shadow={shadowHeader} className={clsx(cls.header, className)}>
 			<div className={`${cls.header__cont} container`} data-mobile>
-				<Icon className={cls.logo} name='logo-color' />
+				<Icon onClick={refreshPage} className={cls.logo} name='logo-color' />
 				<Button variant='secondary' size='small' onClick={() => router.push('/auth')}> Log in/Sign up </Button>
 				<Button name='menu' variant='secondary' size='small'> <Icon name='menu' /> </Button>
 			</div>

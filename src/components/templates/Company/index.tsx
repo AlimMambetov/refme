@@ -23,7 +23,9 @@ export const Company = (props: any) => {
 			<div className={`${cls.nav} mini-cont`}><Link href={'/companies'}>{route}</Link> / <b>{companyName}</b></div>
 
 			<div className={`${cls.info} mini-cont`}>
-				<div className={cls.info__preview}><img src="/images/test-logo.png" /></div>
+				<div className={cls.info__preview}>
+					<img src="/images/test-logo.png" />
+				</div>
 				<Title level={isDesktop ? 1 : 2} className={cls.info__title}>Company  Name</Title>
 				<div className={cls.info__btns}>
 					<Button className={cls.btn_link} size='middle' variant='secondary'><Icon name='link' /></Button>

@@ -24,7 +24,7 @@ export const Footer = (props: any) => {
 				</div>
 				<div className={cls.btns}>
 					<Button w={!isDesktop ? '100%' : ''}>Get it on Google Play <Icon name='google' /></Button>
-					<Button w={!isDesktop ? '100%' : ''}>Get it on App Store <Icon name='apple' /></Button>
+					{/* <Button w={!isDesktop ? '100%' : ''}>Get it on App Store <Icon name='apple' /></Button> */}
 				</div>
 			</div>
 			<p className={cls.desc}>© All rights reserved</p>
