@@ -16,9 +16,10 @@ export const AuthBlock = (props: any) => {
 		password: ['', false],
 	});
 	const [formValid, SET_formValid] = useState(true);
-	const [type, SET_type] = useState<'sign-in' | 'sign-up' | 'code' | 'username' | 'forgot' | 'reset-pass'>('sign-in');
+	const [type, SET_type] = useState<'sign-in' | 'sign-up' | 'code' | 'username' | 'forgot' | 'reset-pass' | 'new-pass'>('sign-in');
 	const [errInpApi, SET_errInpApi] = useState('');
 	const timeoutRef = useRef<any>(null);
+	const [code, setCode] = useState<any>(null)
 
 
 	useEffect(() => {
@@ -57,16 +58,27 @@ export const AuthBlock = (props: any) => {
 		e.preventDefault();
 		clearTimeout(timeoutRef.current);
 		SET_errInpApi('');
-		const password = formData.password[0];
-		const email = formData.email[0];
+		const password = formData.password[0].trim();
+		const email = formData.email[0].trim();
 
 		if (type == 'forgot') {
-			SET_type('reset-pass');
 			await fetch(`${API_URL}/api/auth/forgot-password`, fetchDataPOST({ email }))
+
+			SET_type('reset-pass');
 			return;
 		}
 
 		if (type == 'reset-pass') {
+			return
+		}
+		if (type == 'new-pass') {
+			const newPassword = formData.password[0];
+			const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code, newPassword }));
+			const data = await fetchData.json();
+
+			console.log(data)
+
+			SET_type('sign-in')
 			return
 		}
 
@@ -102,18 +114,27 @@ export const AuthBlock = (props: any) => {
 	const checkValid = async (code: any) => {
 		try {
 			const email = formData.email[0];
-			const newPassword = formData.password[0]
-			const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code, newPassword }))
-			const { accessToken, refreshToken } = await fetchData.json();
+			if (type == 'reset-pass') {
 
-			location.pathname = '/'
+				const fetchData = await fetch(`${API_URL}/api/auth/verify-code-only`, fetchDataPOST({ email, code }))
+				const { success } = await fetchData.json();
+				if (success) SET_type('new-pass')
+				setCode(code);
+				return fetchData?.ok
+			}
+			else {
+				const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code }))
+				const { accessToken, refreshToken } = await fetchData.json();
+				setCode(code);
+				location.pathname = '/'
 
-			// if (fetchData?.ok) {
-			// 	setTokens({ accessToken, refreshToken })
-			// 	SET_type('username')
-			// 	return true
-			// }
-			return fetchData?.ok
+				// if (fetchData?.ok) {
+				// 	setTokens({ accessToken, refreshToken })
+				// 	SET_type('username')
+				// 	return true
+				// }
+				return fetchData?.ok
+			}
 		} catch (error) {
 			return false
 		}
@@ -126,6 +147,7 @@ export const AuthBlock = (props: any) => {
 		"username": "Enter your Username",
 		"forgot": "Reset your password",
 		"reset-pass": "Enter verification code",
+		"new-pass": "Set a new password",
 	} as any;
 
 	const textObj = {
@@ -152,6 +174,7 @@ export const AuthBlock = (props: any) => {
 		"username": "Save",
 		"forgot": "Reset password",
 		"reset-pass": "Resend a code",
+		"new-pass": "Save",
 	} as any;
 
 
@@ -201,10 +224,16 @@ export const AuthBlock = (props: any) => {
 						<InputText w='100%' label='Username' />
 						<p className={cls.username__desc}>You can use a–z, 0-9 and _ <br />The minimum length is 5 simbols</p>
 					</div>}
-					{(['sign-up', 'sign-in', 'forgot'].includes(type)) && <>
+					{(['sign-up', 'sign-in'].includes(type)) && <>
 						<InputText error={errInpApi} w='100%' value={formData.email[0]} onChange={changeInp} name='email' validationRules={validations.email} label='Email' />
 						<InputText w='100%' value={formData.password[0]} forgot={type == 'sign-in' ? <div className='forgot' onClick={onForgot}>Forgot</div> : ''} name='password' onChange={changeInp} validationRules={validations.password} type='password' label={type == 'forgot' ? 'Enter new password' : 'Password'} />
 					</>}
+					{type == 'new-pass' && <>
+						<InputText w='100%' value={formData.password[0]} name='password' onChange={changeInp} validationRules={validations.password} type='password' label={'Enter new password'} />
+						<InputText w='100%' name='password-confirm' validationRules={[{ custom: (value) => value == formData.password[0], message: 'Passwords do not match' }]} onChange={changeInp} type='password' label='Confirm password' />
+					</>
+					}
+					{(['forgot'].includes(type)) && <InputText error={errInpApi} w='100%' value={formData.email[0]} onChange={changeInp} name='email' validationRules={validations.email} label='Email' />}
 					{type == 'sign-up' && <InputText w='100%' name='password-confirm' validationRules={[{ custom: (value) => value == formData.password[0], message: 'Passwords do not match' }]} onChange={changeInp} type='password' label='Confirm password' />}
 					<Button disabled={['sign-up', 'sign-in'].includes(type) && !formValid} type='submit' variant={['sign-up', 'sign-in'].includes(type) ? 'secondary' : 'primary'} w='100%'>{submitObj[type]}</Button>
 				</form>

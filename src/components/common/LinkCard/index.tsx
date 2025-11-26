@@ -4,7 +4,7 @@ import cls from './style.module.scss';
 import { useActions, useIsDesktop } from '@/hooks';
 import { Button, Icon, LinkText, Tag, Text } from '@/components/ui';
 
-export const LinkCard = ({ preview = true }: any) => {
+export const LinkCard = ({ preview = true, description, company }: any) => {
 	const isDesktop = useIsDesktop();
 	const { OPEN_MODAL } = useActions()?.baseAction
 
@@ -15,7 +15,7 @@ export const LinkCard = ({ preview = true }: any) => {
 				<img src="/images/test-logo.png" />
 			</div>}
 			<div className={cls.info}>
-				<Text lines={isDesktop ? 3 : 10} className={cls.text} level='body'>The main terms and benefits of using the link will be written here – you can limit the number of characters or hide anything beyond three lines with an ellipsis</Text>
+				<Text lines={isDesktop ? 3 : 10} className={cls.text} level='body'>{description}</Text>
 			</div>
 			<div className={cls.tags}>
 				<Tag color="blue" icon='user-tick'>user1234</Tag>
