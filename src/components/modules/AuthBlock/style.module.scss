@@ -245,6 +245,16 @@
 		}
 
 		span {
+			&[data-link]{				
+			color: var(--button-main-subtle-text-default, #0079FF);
+			font-weight: 600;
+			text-decoration: underline;
+			cursor: pointer;
+			user-select: none;
+			}
+			&[data-b]{				
+			color: var(--button-main-subtle-text-default, #0079FF);
+			}
 			color: var(--Text_and_Icon-Default-Tertiary, #8692A1);
 		}
 	}
@@ -281,4 +291,16 @@
 			height: 1px;
 		}
 	}
+}
+
+.error {
+	color: var(--Text_and_Icon-Error-Default, #FF4D4F);
+	font-family: var(--Description-family, Inter);
+	font-size: var(--Body-size2, 16px);
+	font-style: normal;
+	font-weight: var(--Description-weight, 400);
+	line-height: 100%;
+	letter-spacing: -0.14px;
+	height: 1em;
+	translate: 0 -10px;
 }

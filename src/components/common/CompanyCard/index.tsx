@@ -28,7 +28,7 @@ export const CompanyCard = ({
 			<p data-name='followers' className={cls.text}><b>{followers}</b> followers</p>
 			<p data-name='links' className={cls.text}><b>{links}</b> links</p>
 
-			<Icon data-liked={liked} className={cls.like} name='heart' />
+			{/* <Icon data-liked={liked} className={cls.like} name='heart' /> */}
 		</div>
 	</>)
 }

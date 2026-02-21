@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Button, Icon, LinkText, Tag, Text, Title } from '@/components/ui';
 import { T_store } from '@/types';
 
+
 export const ModalBarLink = (props: any) => {
 	const { modalOpen } = useSelector((state: T_store) => state.base);
 	const { CLOSE_MODAL } = useActions()?.baseAction
@@ -62,7 +63,7 @@ export const ModalBarLink = (props: any) => {
 					<div className={cls.bar__info}>
 						<div data-block="info">
 							<div className={cls.logo}>
-								<img src="./images/test-logo.png" />
+								<img src="/images/test-logo.png" />
 							</div>
 							<Title level={isDesktop ? 2 : 3}>Company Name</Title>
 							<Text level={isDesktop ? 'body' : 'body-2'}>The main terms and benefits of using the link will be written here – you can limit the number of characters or hide anything beyond three lines with an ellipsis</Text>

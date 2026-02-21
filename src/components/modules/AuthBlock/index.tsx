@@ -2,189 +2,307 @@
 import React, { useEffect, useRef, useState } from 'react';
 import cls from './style.module.scss';
 import { useRouter } from 'next/navigation';
-import { fetchDataPOST, parseTokenExpiry } from '@/scripts';
+import { createStateUpdater, fetchDataPOST, parseTokenExpiry, setTokens } from '@/scripts';
 import { useSelector } from 'react-redux';
-import Cookies from 'js-cookie';
 import { T_store } from '@/types';
 import { Button, Icon, InputCode, InputText, InpValidationRule, Text, Title } from '@/components/ui';
+import { getTextObj, textSubmitObj, textTitleObj } from './textContent';
+import { HintComponent } from './HintComponent';
+
+
+
+export type T_FormStatus = Record<'isLoad' | 'isValid' | 'isError', boolean>;
+export type T_FormData = Record<'email' | 'password' | 'username' | 'code', string>;
+export type T_FormValidData = Record<'email' | 'password' | 'username', boolean>;
+export type T_FormError = Record<'email' | 'password' | 'username' | 'code', string | null>;
+export type T_formType = 'sign-in' | 'sign-up' | 'code-register' | 'code-password' | 'username' | 'new-password';
+
+const defaultFormDataValue = {
+	email: '',
+	password: '',
+	username: '',
+	code: '',
+}
+const defaultFormValidDataValue = {
+	email: false,
+	password: false,
+	username: false,
+}
+const defaultFormErrorValue = {
+	email: null,
+	password: null,
+	username: null,
+	code: null,
+}
+const defaultFormStatusValue = {
+	isLoad: false,
+	isValid: true,
+	isError: false,
+}
+
+
+
 
 export const AuthBlock = (props: any) => {
 	const router = useRouter();
 	const { API_URL } = useSelector((state: T_store) => state.env)
-	const [formData, setFormData] = useState<any>({
-		email: ['', false],
-		password: ['', false],
-	});
-	const [formValid, SET_formValid] = useState(true);
-	const [type, SET_type] = useState<'sign-in' | 'sign-up' | 'code' | 'username' | 'forgot' | 'reset-pass' | 'new-pass'>('sign-in');
-	const [errInpApi, SET_errInpApi] = useState('');
-	const timeoutRef = useRef<any>(null);
-	const [code, setCode] = useState<any>(null)
+	const [type, typeSetter] = useState<T_formType>('sign-in');
+	const [formData, formDataSetter] = useState<T_FormData>(defaultFormDataValue);
+	const [formValidData, formValidDataSetter] = useState<T_FormValidData>(defaultFormValidDataValue);
+	const [formError, formErrorSetter] = useState<T_FormError>(defaultFormErrorValue);
+	const [formStatus, formStatusSetter] = useState<T_FormStatus>(defaultFormStatusValue);
+	const [matchConfirmPassword, matchConfirmPasswordSetter] = useState(false);
+	// --------------------------------------------
+	const { email, password, username, code } = formData;
+	const { isLoad, isValid, isError } = formStatus;
+	const {
+		email: emailError,
+		password: passwordError,
+		username: usernameError,
+		code: codeError
+	} = formError;
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	// ---------------------------------------------
+	const setFormData = createStateUpdater(formDataSetter);
+	const setFormStatus = createStateUpdater(formStatusSetter);
+	const setFormError = createStateUpdater(formErrorSetter);
+	const setFormValid = createStateUpdater(formValidDataSetter);
+	// setFormData('email', 'test@example.com'); // ✅ обновит одно поле
+	// setFormData({ email: 'test@example.com', password: '123' }); // ✅ обновит несколько
+	// ---------------------------------------------
+	const clearFormData = () => setFormData(defaultFormDataValue);
+	const clearFormStatus = () => setFormStatus(defaultFormStatusValue);
+	const clearErrors = () => setFormError(defaultFormErrorValue);
 
 
 	useEffect(() => {
-		let result = true;
-		Object.values(formData).forEach((value: any) => !value[1] ? (result = false) : null);
-		SET_formValid(result)
-	}, [formData])
+		let valid = true;
 
-	const validations = {
-		email: [
-			{ required: true, email: true, }
-		] as InpValidationRule[],
-		password: [
-			{ required: true, minLength: 6 }
-		] as InpValidationRule[]
-	}
+		function startVaild(arrKeys: Array<keyof T_FormValidData | 'confirm-password'>) {
+			for (let key of arrKeys) {
+				if (key === 'confirm-password') {
+					if (!matchConfirmPassword) {
+						valid = false;
+						break;
+					}
+					continue;
+				}
 
-
-	const setTokens = ({ refreshToken = '', accessToken = '' }: any) => {
-		const accessExpiry = parseTokenExpiry('15m');
-		const refreshExpiry = parseTokenExpiry('30d');
-		Cookies.set('access_token', accessToken, {
-			expires: accessExpiry, // 1 день
-			secure: true,
-			sameSite: 'strict'
-		});
-
-		Cookies.set('refresh_token', refreshToken, {
-			expires: refreshExpiry, // 7 дней
-			secure: true,
-			sameSite: 'strict'
-		});
-	}
-
-	const sendReq = async (e: any) => {
-		e.preventDefault();
-		clearTimeout(timeoutRef.current);
-		SET_errInpApi('');
-		const password = formData.password[0].trim();
-		const email = formData.email[0].trim();
-
-		if (type == 'forgot') {
-			await fetch(`${API_URL}/api/auth/forgot-password`, fetchDataPOST({ email }))
-
-			SET_type('reset-pass');
-			return;
-		}
-
-		if (type == 'reset-pass') {
-			return
-		}
-		if (type == 'new-pass') {
-			const newPassword = formData.password[0];
-			const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code, newPassword }));
-			const data = await fetchData.json();
-
-			console.log(data)
-
-			SET_type('sign-in')
-			return
-		}
-
-		if (type == 'sign-in') {
-			const fetchData = await fetch(`${API_URL}/api/auth/login`, fetchDataPOST({ email, password }))
-			const { accessToken, refreshToken } = await fetchData.json();
-			if (fetchData?.ok) {
-				setTokens({ accessToken, refreshToken })
-				router.push('/')
-			} else {
-				SET_errInpApi('Wrong login or password');
-				timeoutRef.current = setTimeout(() => {
-					SET_errInpApi('')
-				}, 3000);
+				if (!formValidData[key]) {
+					valid = false;
+					break;
+				}
 			}
-
-			return;
-		};
-		if (type == 'username') return router.push('/');
-		if (type == 'sign-up') {
-			const fetchData = await fetch(`${API_URL}/api/auth/register`, fetchDataPOST({ email, password }))
-			const res = await fetchData.json();
-			SET_type('code');
-			return
 		}
+
+		const validKeys = {
+			'sign-in': ['email', 'password'],
+			'sign-up': ['email', 'password', 'confirm-password'],
+			'username': ['username'],
+			'new-password': ['password', 'confirm-password'],
+			'code-register': [],
+			'code-password': [],
+		};
+
+		startVaild(validKeys[type] as Array<keyof T_FormValidData>);
+
+		setFormStatus('isValid', valid);
+	}, [formValidData, type, matchConfirmPassword])
+
+
+
+
+	const resendCode = async () => {
+		const fetchData = await fetch(`${API_URL}/api/auth/send-code?email=${email}`);
+		const res = await fetchData.json();
+		if (res.success) {
+			setFormData('code', '')
+			return;
+		}
+	}
+
+	const checkValidationCode = async (code: string) => {
+		const fetchData = await fetch(`${API_URL}/api/auth/verify-code?email=${email}&code=${code}`);
+		const res = await fetchData.json();
+		if (res.success) {
+			return true;
+		}
+		return false;
 	}
 
 	const changeInp = (inp: any) => {
 		let name = inp.event.target.name;
-		setFormData((prev: any) => ({ ...prev, [name]: [inp.value, inp.isValid] }))
+		let value = inp.event.target.value;
+		setFormData(name, value)
 	}
 
-	const checkValid = async (code: any) => {
+
+	const forgotAction = async () => {
 		try {
-			const email = formData.email[0];
-			if (type == 'reset-pass') {
-
-				const fetchData = await fetch(`${API_URL}/api/auth/verify-code-only`, fetchDataPOST({ email, code }))
-				const { success } = await fetchData.json();
-				if (success) SET_type('new-pass')
-				setCode(code);
-				return fetchData?.ok
-			}
-			else {
-				const fetchData = await fetch(`${API_URL}/api/auth/verify-code`, fetchDataPOST({ email, code }))
-				const { accessToken, refreshToken } = await fetchData.json();
-				setCode(code);
-				location.pathname = '/'
-
-				// if (fetchData?.ok) {
-				// 	setTokens({ accessToken, refreshToken })
-				// 	SET_type('username')
-				// 	return true
-				// }
-				return fetchData?.ok
-			}
+			const fetchFreeEmail = await fetch(`${API_URL}/api/auth/free-email?email=${email}`);
+			const resFreeEmail = await fetchFreeEmail.json();
+			if (resFreeEmail.success) return setFormError('email', 'no such email exists');
+			const fetchCode = await fetch(`${API_URL}/api/auth/send-code?email=${email}`);
+			const resCode = await fetchCode.json();
+			if (!resCode.success) return setFormError('email', 'This field is required');
+			if (resCode.success) typeSetter('code-password');
 		} catch (error) {
-			return false
+			alert(error)
 		}
-	};
+	}
 
-	const titleObj = {
-		"sign-in": "Welcome to RefMe",
-		"sign-up": "Create your RefMe account",
-		"code": "Enter verification code",
-		"username": "Enter your Username",
-		"forgot": "Reset your password",
-		"reset-pass": "Enter verification code",
-		"new-pass": "Set a new password",
+
+	const inputOps = {
+		username: {
+			name: 'username',
+			label: 'Username',
+			isValid: (valid: boolean) => setFormValid('username', valid),
+			error: usernameError,
+			validationRules: [{ minLength: 2, message: 'Username must be at least 2 characters long' }, { required: true }],
+			value: username,
+			onChange: changeInp,
+			onFocus: clearErrors
+		},
+		email: {
+			name: 'email',
+			label: 'Email',
+			isValid: (valid: boolean) => setFormValid('email', valid),
+			validationRules: [{ email: true, message: 'Enter the correct email' }, { required: true }],
+			value: email,
+			error: emailError,
+			onChange: changeInp,
+			onFocus: clearErrors
+		},
+		password: {
+			name: 'password',
+			label: type == 'new-password' ? 'Enter new password' : 'Password',
+			value: password,
+			error: passwordError,
+			isValid: (valid: boolean) => setFormValid('password', valid),
+			validationRules: [{ minLength: 6, message: 'Password must be at least 6 characters long' }, { required: true }],
+			forgot: type == 'sign-in' ? <div className='forgot' onClick={forgotAction}>Forgot</div> : '',
+			onChange: changeInp,
+			type: 'password',
+			onFocus: clearErrors
+		},
+		confirmPassword: {
+			name: 'password-confirm',
+			label: 'Confirm password',
+			isValid: (valid: boolean) => matchConfirmPasswordSetter(valid),
+			validationRules: [{ custom: (value: any) => value == password, message: 'Passwords do not match' }, { required: true }],
+			onChange: changeInp,
+			type: 'password',
+			onFocus: clearErrors
+		}
 	} as any;
 
-	const textObj = {
-		"sign-in": "or log in with email",
-		"sign-up": "or create account with email",
-		"code": <>We`ve sent a code to <b>{formData?.email}</b></>,
-		"reset-pass": <>We`ve sent a code to <b>{formData?.email}</b></>,
-		"username": "Your username will be displayed when you post links",
-		"forgot": "Enter the email address to which your account is registered",
-	} as any;
 
-	const hintObj = {
-		"sign-in": <><p>Don't have an account?</p> <b onClick={() => SET_type('sign-up')}>Sign up</b></>,
-		"sign-up": <><p>Already have an account?</p> <b onClick={() => SET_type('sign-in')}>Log in</b></>,
-		"code": <><p>Didn't get a code even after resending?</p> <b>Contact support</b></>,
-		"reset-pass": <><p>Didn't get a code even after resending?</p> <b>Contact support</b></>,
-		// "username": <><p>Don't have an account?</p> <b>Sign up</b></>,
-	} as any;
+	const sendReq = async (e: any) => {
+		e.preventDefault();
+		if (!isValid) return console.log('valid err');
+		clearErrors();
+		setFormStatus('isLoad', true);
 
-	const submitObj = {
-		"sign-in": "Log in",
-		"sign-up": "Create new account",
-		"code": "Resend a code",
-		"username": "Save",
-		"forgot": "Reset password",
-		"reset-pass": "Resend a code",
-		"new-pass": "Save",
-	} as any;
+
+		const handlers = {
+			'sign-in': async () => {
+				try {
+					const fetchData = await fetch(`${API_URL}/api/auth/login`, fetchDataPOST({ email, password }));
+					const res = await fetchData.json();
+					if (res.success) {
+						setTokens(res.tokens)
+						router.push('/')
+						return;
+					}
+
+					if (res.error == "Validation error") {
+						res.details.forEach(({ field, message }: any) => {
+							setFormError(field, message)
+						});
+					}
+					if (res.error == "Invalid password") setFormError('password', 'Invalid password');
+					if (res.error == "User not found") setFormError('email', 'User not found');
+				} catch (error) {
+					alert(error)
+				}
+			},
+			'sign-up': async () => {
+				try {
+					const fetchFreeEmail = await fetch(`${API_URL}/api/auth/free-email?email=${email}`);
+					const resFreeEmail = await fetchFreeEmail.json();
+					if (!resFreeEmail.success) {
+						setFormError('email', resFreeEmail.message);
+						return;
+					}
+					const fetchData = await fetch(`${API_URL}/api/auth/send-code?email=${email}`);
+					const res = await fetchData.json();
+					if (res.success) typeSetter('code-register');
+
+				} catch (error) {
+					alert(error)
+				}
+			},
+			'username': async () => {
+				try {
+					const fetchFreeUsername = await fetch(`${API_URL}/api/auth/free-username?username=${username}`);
+					const resFreeUsername = await fetchFreeUsername.json();
+					if (!resFreeUsername.success) {
+						setFormError('username', resFreeUsername.message);
+						return;
+					}
+					const fetchData = await fetch(`${API_URL}/api/auth/register`, fetchDataPOST({ email, password, username, code }));
+					const res = await fetchData.json();
+					if (res.success) {
+						setTokens(res.tokens)
+						router.push('/')
+						return;
+					}
+				} catch (error) {
+					alert(error)
+				}
+			},
+			'new-password': async () => {
+				const fetchData = await fetch(`${API_URL}/api/auth/forgot-password`, fetchDataPOST({ email, password, code }));
+				const res = await fetchData.json();
+				if (res.success) {
+					typeSetter('sign-in');
+					alert(res.message);
+					return;
+				};
+				if (res.error == "Validation error") {
+					res.details.forEach(({ field, message }: any) => {
+						setFormError(field, message)
+					});
+				}
+			},
+			'code-register': async () => {
+				const isValid = await checkValidationCode(code);
+				if (isValid) return typeSetter('username');
+				setFormError('code', 'Your code is invalid or has expired');
+			},
+			'code-password': async () => {
+				const isValid = await checkValidationCode(code);
+				if (isValid) return typeSetter('new-password');
+				setFormError('code', 'Your code is invalid or has expired');
+			},
+		};
+
+		const handler = handlers[type];
+		if (handler) {
+			await handler();
+		} else {
+			console.warn(`Unknown type: ${type}`);
+		}
+
+		setFormStatus('isLoad', false);
+	}
+
 
 
 	const authGoogle = async () => {
 		router.push(`${API_URL}/api/auth/google`)
 	}
 
-	const onForgot = () => {
-		SET_type('forgot')
-	}
 
 	return (<>
 		<div className={cls.wrap}>
@@ -200,46 +318,45 @@ export const AuthBlock = (props: any) => {
 
 			</div>
 			<div className={cls.auth}>
-				{type == 'code' && <div className={cls.auth__back}>
-					<Button onClick={() => SET_type('sign-up')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Change email</Button>
-				</div>}
-				{type == 'reset-pass' && <div className={cls.auth__back}>
-					<Button onClick={() => SET_type('forgot')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Change email</Button>
-				</div>}
-				{type == 'forgot' && <div className={cls.auth__back}>
-					<Button onClick={() => SET_type('sign-in')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Back</Button>
+				{type == 'code-register' && <div className={cls.auth__back}>
+					<Button onClick={() => typeSetter('sign-up')} size='small' variant='secondary' className={cls.btn}><Icon name='back' /> Change email</Button>
 				</div>}
 				<div className={cls.auth__head}>
-					<Title className={cls.auth__title} level={2}>{titleObj[type]}</Title>
-					{(['code', 'username', 'forgot', 'reset-pass'].includes(type)) && <Text className={cls.text}>{textObj[type]}</Text>}
+					<Title className={cls.auth__title} level={2}>{textTitleObj[type]}</Title>
+					{(['code-register', 'code-password', 'username'].includes(type)) && <Text className={cls.text}>{getTextObj(email)[type]}</Text>}
 				</div>
 				{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.auth__btns}>
 					<Button onClick={authGoogle} className={cls.btn} variant='primary'>Log in with Google <Icon name='google-fill' /></Button>
 					{/* <Button className={cls.btn} variant='primary'>Log in with Apple <Icon name='apple' /></Button> */}
 				</div>}
 				<form onSubmit={sendReq} className={cls.form}>
-					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.form__legend}>{textObj[type]}</div>}
-					{(['reset-pass', 'code'].includes(type)) && <InputCode className={cls.code} checkValid={checkValid} />}
+					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.form__legend}>{getTextObj(email)[type]}</div>}
+					{(['code-register', 'code-password'].includes(type)) &&
+						<>
+							<InputCode onChange={clearErrors} isError={codeError ? true : false} onComplete={(code) => setFormData('code', code)} className={cls.code} />
+							<div className={cls.error}>{codeError}</div>
+						</>}
 					{type == 'username' && <div className={cls.username}>
-						<InputText w='100%' label='Username' />
+						<InputText w='100%' {...inputOps.username} />
 						<p className={cls.username__desc}>You can use a–z, 0-9 and _ <br />The minimum length is 5 simbols</p>
 					</div>}
 					{(['sign-up', 'sign-in'].includes(type)) && <>
-						<InputText error={errInpApi} w='100%' value={formData.email[0]} onChange={changeInp} name='email' validationRules={validations.email} label='Email' />
-						<InputText w='100%' value={formData.password[0]} forgot={type == 'sign-in' ? <div className='forgot' onClick={onForgot}>Forgot</div> : ''} name='password' onChange={changeInp} validationRules={validations.password} type='password' label={type == 'forgot' ? 'Enter new password' : 'Password'} />
+						<InputText w='100%' {...inputOps.email} />
+						<InputText w='100%' {...inputOps.password} />
 					</>}
-					{type == 'new-pass' && <>
-						<InputText w='100%' value={formData.password[0]} name='password' onChange={changeInp} validationRules={validations.password} type='password' label={'Enter new password'} />
-						<InputText w='100%' name='password-confirm' validationRules={[{ custom: (value) => value == formData.password[0], message: 'Passwords do not match' }]} onChange={changeInp} type='password' label='Confirm password' />
+					{type == 'new-password' && <>
+						<InputText w='100%' {...inputOps.password} />
+						<InputText w='100%' {...inputOps.confirmPassword} />
 					</>
 					}
-					{(['forgot'].includes(type)) && <InputText error={errInpApi} w='100%' value={formData.email[0]} onChange={changeInp} name='email' validationRules={validations.email} label='Email' />}
-					{type == 'sign-up' && <InputText w='100%' name='password-confirm' validationRules={[{ custom: (value) => value == formData.password[0], message: 'Passwords do not match' }]} onChange={changeInp} type='password' label='Confirm password' />}
-					<Button disabled={['sign-up', 'sign-in'].includes(type) && !formValid} type='submit' variant={['sign-up', 'sign-in'].includes(type) ? 'secondary' : 'primary'} w='100%'>{submitObj[type]}</Button>
+					{type == 'sign-up' && <InputText w='100%' {...inputOps.confirmPassword} />}
+					<Button type='submit' disabled={isLoad} variant={['sign-up', 'sign-in'].includes(type) ? 'secondary' : 'primary'} w='100%'>{textSubmitObj[type]}</Button>
 				</form>
-				<div className={cls.auth__hint}>{hintObj[type]}</div>
+				<div className={cls.auth__hint}>
+					<HintComponent {...({ type, typeSetter, resendCode })} />
+				</div>
 				<div className={cls.auth__foot}>
-					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.form__legend}>{textObj[type]}</div>}
+					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.form__legend}>{getTextObj(email)[type]}</div>}
 					{(['sign-up', 'sign-in'].includes(type)) && <div className={cls.auth__btns}>
 						<Button className={cls.btn} variant='primary'>Google <Icon name='google-fill' /></Button>
 						{/* <Button className={cls.btn} variant='primary'>Apple <Icon name='apple' /></Button> */}
@@ -249,7 +366,6 @@ export const AuthBlock = (props: any) => {
 							<span>2025 ©</span>
 							<p>All rights reserved</p>
 						</div>
-
 						<Icon name='full-logo' />
 					</div>
 				</div>

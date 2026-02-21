@@ -1,13 +1,16 @@
 'use client'
 import React, { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } from 'react';
 import cls from './style.module.scss';
+import { on } from 'events';
 
 interface VerificationCodeProps {
 	length?: number;
 	onComplete?: (code: string) => void;
 	autoFocus?: boolean;
+	isError?: boolean;
 	className?: string;
 	checkValid?: (code: string) => Promise<boolean>;
+	onChange?: (code: string) => void;
 }
 
 
@@ -17,6 +20,8 @@ export const InputCode: React.FC<VerificationCodeProps> = ({
 	autoFocus = true,
 	checkValid,
 	className,
+	isError = false,
+	onChange,
 }) => {
 	const [code, setCode] = useState<string[]>(Array(length).fill(''));
 	const [isChecking, setIsChecking] = useState(false);
@@ -29,6 +34,10 @@ export const InputCode: React.FC<VerificationCodeProps> = ({
 		}
 	}, [autoFocus]);
 
+	useEffect(() => {
+		setIsValid(!isError);
+	}, [isError])
+
 
 	useEffect(() => {
 		const completeCode = code.join('');
@@ -36,6 +45,10 @@ export const InputCode: React.FC<VerificationCodeProps> = ({
 			handleCodeComplete(completeCode);
 		}
 	}, [code, length]);
+
+	useEffect(() => {
+		if (onChange) onChange(code.join(''))
+	}, [code])
 
 	const handleCodeComplete = async (completeCode: string) => {
 		if (onComplete) {

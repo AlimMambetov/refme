@@ -49,6 +49,7 @@ export type T_InputProps = Omit<ComponentProps<'input'>, 'onChange' | 'onBlur' |
 	popular?: null | string[];
 	advice?: null | string[];
 	forgot?: string | ReactNode;
+	isValid?: (valid: boolean) => void;
 }
 
 
@@ -78,6 +79,7 @@ export const InputText = (props: T_InputProps) => {
 		advice,
 		error,
 		forgot,
+		isValid,
 		...rest
 	} = props;
 	const [isFocused, setIsFocused] = useState(false);
@@ -140,6 +142,10 @@ export const InputText = (props: T_InputProps) => {
 
 	const validation = validateInput();
 	const shouldShowValidation = (showValidation || isTouched) && !isFocused;
+
+	useEffect(() => {
+		if (isValid) isValid(validation.isValid);
+	}, [validation.isValid])
 
 	const clear = () => {
 		setIsTouched(false);
