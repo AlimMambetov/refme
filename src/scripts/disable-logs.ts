@@ -24,14 +24,33 @@ export function disableDevLogs() {
 			return blockedPatterns.some(pattern => pattern.test(message));
 		};
 
-		// Перехватываем все console методы
+		// Простое преобразование без JSON.stringify для сложных объектов
 		const methods = ['log', 'info', 'debug', 'warn'] as const;
 
 		methods.forEach(method => {
 			console[method] = (...args: any[]) => {
-				const message = args.map(arg =>
-					typeof arg === 'string' ? arg : JSON.stringify(arg)
-				).join(' ');
+				// Пытаемся получить строку без JSON.stringify
+				let message = '';
+				try {
+					message = args.map(arg => {
+						if (typeof arg === 'string') return arg;
+						if (typeof arg === 'object' && arg !== null) {
+							// Проверяем на DOM элементы
+							if (arg instanceof Element || arg instanceof Node) {
+								return `[DOM Element]`;
+							}
+							// Пробуем преобразовать объект
+							try {
+								return JSON.stringify(arg);
+							} catch {
+								return `[Object ${arg.constructor?.name || 'unknown'}]`;
+							}
+						}
+						return String(arg);
+					}).join(' ');
+				} catch {
+					message = args.map(arg => String(arg)).join(' ');
+				}
 
 				if (!shouldBlock(message)) {
 					original[method].apply(console, args);
